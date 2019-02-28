@@ -9,6 +9,8 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class KryptoNoteActivity extends AppCompatActivity
 {
@@ -26,16 +28,28 @@ public class KryptoNoteActivity extends AppCompatActivity
         {
             String key = ((EditText) findViewById(R.id.key)).getText().toString();
             String note = ((EditText) findViewById(R.id.data)).getText().toString();
-            if (key != null && !key.isEmpty())
+
+            Pattern notePattern = Pattern.compile("^[A-Z_\\s]+$");
+            Matcher noteMatcher = notePattern.matcher(note);
+            boolean noteIsMatch = noteMatcher.find();
+
+            boolean keyIsMatch = key != null && !key.isEmpty();
+
+            if (!keyIsMatch)
+            {
+                throw new RuntimeException("You have not entered a key");
+            }
+            else if (!noteIsMatch)
+            {
+                throw new RuntimeException("The text to encrypt/decrypt can only have UPPERCASE letters");
+            }
+            else
             {
                 CipherModel model = new CipherModel(key);
                 String encryptedNote = model.encrypt(note);
                 ((EditText) findViewById(R.id.data)).setText(encryptedNote);
-            }else
-            {
-                throw new RuntimeException("You have not entered a key");
-            }
 
+            }
         }
         catch (Exception e)
         {
@@ -51,16 +65,22 @@ public class KryptoNoteActivity extends AppCompatActivity
         {
             String key = ((EditText) findViewById(R.id.key)).getText().toString();
             String note = ((EditText) findViewById(R.id.data)).getText().toString();
-            if (key != null && !key.isEmpty())
-            {
+
+            Pattern notePattern = Pattern.compile("^[A-Z_\\s]+$");
+            Matcher noteMatcher = notePattern.matcher(note);
+            boolean noteIsMatch = noteMatcher.find();
+
+            boolean keyIsMatch = key != null && !key.isEmpty();
+
+            if (!keyIsMatch) {
+                throw new RuntimeException("You have not entered a key");
+            } else if (!noteIsMatch) {
+                throw new RuntimeException("The text to encrypt/decrypt can only have UPPERCASE letters");
+            } else {
                 CipherModel model = new CipherModel(key);
                 String decryptedNote = model.decrypt(note);
                 ((EditText) findViewById(R.id.data)).setText(decryptedNote);
-            }else
-            {
-                throw new RuntimeException("You have not entered a key");
             }
-
         }
         catch (Exception e)
         {
@@ -74,13 +94,25 @@ public class KryptoNoteActivity extends AppCompatActivity
         try
         {
             String name = ((EditText) findViewById(R.id.file)).getText().toString();
-            File dir = this.getFilesDir();
-            File file = new File(dir, name);
-            FileWriter fw = new FileWriter(file);
-            fw.write(((EditText) findViewById(R.id.data)).getText().toString());
-            fw.close();
-            Toast confirmMsg = Toast.makeText(this, "Note Saved.", Toast.LENGTH_LONG);
-            confirmMsg.show();
+
+            Pattern filePattern = Pattern.compile("^[a-zA-Z_0-9]+$");
+            Matcher fileMatcher = filePattern.matcher(name);
+            boolean fileIsMatch = fileMatcher.find();
+
+            if (!fileIsMatch)
+            {
+                throw new RuntimeException("File name can only have letters and numbers, and no spaces");
+            }
+            else
+            {
+                File dir = this.getFilesDir();
+                File file = new File(dir, name);
+                FileWriter fw = new FileWriter(file);
+                fw.write(((EditText) findViewById(R.id.data)).getText().toString());
+                fw.close();
+                Toast confirmMsg = Toast.makeText(this, "Note Saved.", Toast.LENGTH_LONG);
+                confirmMsg.show();
+            }
         }
         catch (Exception e)
         {
@@ -94,16 +126,28 @@ public class KryptoNoteActivity extends AppCompatActivity
         try
         {
             String name = ((EditText) findViewById(R.id.file)).getText().toString();
-            File dir = this.getFilesDir();
-            File file = new File(dir, name);
-            FileReader fr = new FileReader(file);
-            String show = "";
-            for (int c = fr.read(); c != -1; c = fr.read())
+
+            Pattern filePattern = Pattern.compile("^[a-zA-Z_0-9]+$");
+            Matcher fileMatcher = filePattern.matcher(name);
+            boolean fileIsMatch = fileMatcher.find();
+
+            if (!fileIsMatch)
             {
-                show += (char) c;
+                throw new RuntimeException("File name can only have letters and numbers, and no spaces");
             }
-            fr.close();
-            ((EditText) findViewById(R.id.data)).setText(show);
+            else
+            {
+                File dir = this.getFilesDir();
+                File file = new File(dir, name);
+                FileReader fr = new FileReader(file);
+                String show = "";
+                for (int c = fr.read(); c != -1; c = fr.read())
+                {
+                    show += (char) c;
+                }
+                fr.close();
+                ((EditText) findViewById(R.id.data)).setText(show);
+            }
         }
         catch (Exception e)
         {
