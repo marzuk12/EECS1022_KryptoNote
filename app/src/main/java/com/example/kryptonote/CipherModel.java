@@ -47,16 +47,16 @@ public class CipherModel
             int newPosition = position - shift;
             if (newPosition < 0)
             {
-                newPosition = ALPHABET.length() - newPosition;
+                newPosition = ALPHABET.length() + newPosition;
             }
             result = result + ALPHABET.substring(newPosition, newPosition + 1);
         }
         return result;
     }
 
-   /* public static void main(String[] args)
+    /*public static void main(String[] args)
     {
-        String testKey = "1234";
+        String testKey = "1111";
         CipherModel testModel = new CipherModel(testKey);
 
         String testNote = "THIS IS A TEST";
@@ -65,8 +65,9 @@ public class CipherModel
 
         String decryptedNote = testModel.decrypt(encryptedNote);
 
+
         System.out.println(encryptedNote);
 
-        System.out.println(decryptedNote);
+        System.out.println(testModel.decrypt("BB BB"));
     }*/
 }
